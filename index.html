@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto i3 - Taller de Liderazgo y Motivación</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#4A154B',
+                            purpleDark: '#350d36',
+                            turquoise: '#00B8D9',
+                            orange: '#FF5630',
+                            yellow: '#FACC15',
+                            grayBg: '#F8F9FA'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .sticker-card {
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 1.25rem;
+        }
+        .comic-box {
+            border-radius: 1.5rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* ===== Sistema de toasts (no bloqueante, reemplaza alert) ===== */
+        #toast-container {
+            position: fixed; bottom: 1rem; right: 1rem; left: 1rem;
+            display: flex; flex-direction: column; gap: 0.5rem;
+            z-index: 9999; pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            #toast-container { left: auto; width: 22rem; bottom: 1.25rem; right: 1.25rem; }
+        }
+        .toast {
+            pointer-events: auto;
+            border-radius: 0.6rem; padding: 0.75rem 1rem;
+            font-size: 0.75rem; line-height: 1.4; color: #1f2937;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+            background: #ffffff;
+            animation: toast-in 0.25s ease-out;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+        .toast-success { background: #064e3b; color: #ecfdf5; border-color: #10b981; }
+        .toast-error   { background: #7f1d1d; color: #fef2f2; border-color: #ef4444; }
+        .toast-warning { background: #92400e; color: #fffbeb; border-color: #f59e0b; }
+        .toast-info    { background: #1e3a8a; color: #eff6ff; border-color: #3b82f6; }
+        @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== Ruta Ctrl+P directa: limpia la página para impresión ===== */
+        @media print {
+            header, footer, #toast-container, .no-print { display: none !important; }
+            body { background: #ffffff !important; }
+            section { box-shadow: none !important; border-color: #d1d5db !important; page-break-inside: auto; }
+            .bg-brand-yellow, .bg-purple-900, .bg-brand-purple { background: #ffffff !important; color: #111827 !important; }
+            .bg-brand-yellow * , .bg-purple-900 *, .bg-brand-purple * { color: #111827 !important; }
+            button, label[class*="bg-"], input[type="file"] { display: none !important; }
+            * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Contenedor de toasts -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- SECCIÓN 0: NAVBAR & HERO BANNER -->
+    <header class="bg-brand-purple text-white shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-yellow text-brand-purple font-extrabold px-3 py-1 rounded-xl text-xl shadow-md border-2 border-white">
+                    i3
+                </div>
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-brand-turquoise font-extrabold">Instituto i3</span>
+                    <h1 class="text-lg font-bold leading-tight">inclusión • inflexión • impacto</h1>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-sm bg-purple-900/60 px-4 py-2 rounded-xl border border-purple-700/50">
+                <i class="fa-solid fa-graduation-cap text-brand-yellow"></i>
+                <span class="font-semibold">Módulo: Liderazgo y Gestión del Talento</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- BANNER DE TÍTULO PRINCIPAL -->
+        <section class="bg-brand-yellow p-6 sm:p-8 rounded-3xl border-4 border-white shadow-xl text-gray-900 relative overflow-hidden">
+            <div class="relative z-10 space-y-4">
+                <div class="inline-block bg-brand-purple text-white px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-sm">
+                    Taller Virtual Autónomo
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-purple leading-tight">
+                    "DEL DIAGNÓSTICO A LA ACCIÓN MOTIVACIONAL"
+                </h2>
+                <p class="text-base sm:text-lg font-bold text-purple-950 max-w-3xl">
+                    Guía de Aplicación Práctica: Caso Real Pyme "Cuello de Botella en Gestión Documental"
+                </p>
+
+                <!-- BADGES INFORMATIVOS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-4">
+                    <div class="bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-brand-purple/10 flex items-center space-x-3 shadow-sm">
+                        <span class="text-2xl">⏱️</span>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Duración</p>
+                            <p class="text-sm font-extrabold text-brand-purple">120 Minutos</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-brand-purple/10 flex items-center space-x-3 shadow-sm">
+                        <span class="text-2xl">💻</span>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Modalidad</p>
+                            <p class="text-sm font-extrabold text-brand-purple">Salas 4-5 pers.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-brand-purple/10 flex items-center space-x-3 shadow-sm">
+                        <span class="text-2xl">📄</span>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Entregable</p>
+                            <p class="text-sm font-extrabold text-brand-purple">Matriz de Plan</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-brand-purple/10 flex items-center space-x-3 shadow-sm">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase">Dinámica</p>
+                            <p class="text-sm font-extrabold text-brand-purple">Auto-gestión</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATOS DE REGISTRO E IDENTIFICADOR DE ACTIVIDAD -->
+        <section class="bg-white p-6 rounded-3xl border-2 border-gray-200 shadow-md space-y-4">
+            <div class="flex items-center space-x-3 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-id-card text-2xl text-brand-turquoise"></i>
+                <h3 class="text-lg font-extrabold text-brand-purple">Registro de Datos del Taller</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-extrabold uppercase text-gray-600 mb-1">Materia</label>
+                    <input type="text" id="input-materia" value="Liderazgo y Gestión del Talento" readonly class="w-full bg-gray-100 border border-gray-300 text-gray-700 font-bold text-sm rounded-xl p-3 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold uppercase text-gray-600 mb-1">ID Actividad (Fijo)</label>
+                    <input type="text" id="input-actividad-id" name="actividad_id" value="I3Liderazgo_ACT06" readonly class="w-full bg-gray-100 border border-gray-300 text-gray-700 font-bold text-sm rounded-xl p-3 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold uppercase text-gray-600 mb-1">Número de Sala / Grupo *</label>
+                    <input type="text" id="input-grupo" placeholder="Ej: Sala 03" class="w-full border-2 border-brand-turquoise focus:border-brand-purple text-gray-800 font-bold text-sm rounded-xl p-3 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold uppercase text-gray-600 mb-1">Integrantes (Nombres) *</label>
+                    <input type="text" id="input-participantes" placeholder="Nombre 1, Nombre 2..." class="w-full border-2 border-brand-turquoise focus:border-brand-purple text-gray-800 font-bold text-sm rounded-xl p-3 outline-none transition">
+                </div>
+            </div>
+        </section>
+
+        <!-- RUTA AUTÓNOMA GUÍA PASO A PASO -->
+        <section class="bg-purple-900 text-white p-6 rounded-3xl shadow-xl space-y-4">
+            <h3 class="text-xl font-extrabold text-brand-yellow flex items-center gap-2">
+                <i class="fa-solid fa-route"></i> Ruta del Trabajo Autónomo (Paso a Paso)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-semibold">
+                <div class="bg-purple-800/80 p-4 rounded-2xl border border-purple-700 space-y-1">
+                    <p class="text-brand-yellow font-extrabold text-sm">PASO 1</p>
+                    <p class="font-bold">Lectura y Asignación</p>
+                    <p class="text-purple-200">Revisen el caso Pyme y asignen obligatoriamente los 4 roles dialécticos en la mesa.</p>
+                </div>
+                <div class="bg-purple-800/80 p-4 rounded-2xl border border-purple-700 space-y-1">
+                    <p class="text-brand-yellow font-extrabold text-sm">PASO 2</p>
+                    <p class="font-bold">Análisis y Respuestas</p>
+                    <p class="text-purple-200">Diligencien los 4 Bloques de trabajo guiados con la fundamentación teórica.</p>
+                </div>
+                <div class="bg-purple-800/80 p-4 rounded-2xl border border-purple-700 space-y-1">
+                    <p class="text-brand-yellow font-extrabold text-sm">PASO 3</p>
+                    <p class="font-bold">Enviar al Docente</p>
+                    <p class="text-purple-200">Hagan clic en "Enviar Trabajo" para transmitir sus respuestas al libro central.</p>
+                </div>
+                <div class="bg-purple-800/80 p-4 rounded-2xl border border-purple-700 space-y-1">
+                    <p class="text-brand-yellow font-extrabold text-sm">PASO 4</p>
+                    <p class="font-bold">Reporte PDF Evidencia</p>
+                    <p class="text-purple-200">Generen la vista previa para guardar/imprimir el informe PDF institucional.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 1: CRONOGRAMA DE AUTO-GESTIÓN -->
+        <section class="bg-white p-6 rounded-3xl border-2 border-gray-200 shadow-md space-y-4">
+            <div class="flex items-center space-x-3 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-clock text-2xl text-brand-orange"></i>
+                <h3 class="text-xl font-extrabold text-brand-purple">Fases del Taller (120 Minutos)</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-gray-100 text-brand-purple font-extrabold border-b-2 border-gray-200">
+                            <th class="p-3 rounded-l-xl">Fase del Taller</th>
+                            <th class="p-3 text-center">Tiempo</th>
+                            <th class="p-3 rounded-r-xl">Dinámica de Trabajo y Objetivo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 font-semibold">
+                        <tr class="hover:bg-purple-50/50">
+                            <td class="p-3 font-extrabold text-brand-purple">Fase 1: Roles y Caso</td>
+                            <td class="p-3 text-center text-brand-orange font-extrabold">15 min</td>
+                            <td class="p-3 text-gray-700">Lectura individual del caso de estudio y asignación obligatoria de 4 roles dialécticos en la mesa.</td>
+                        </tr>
+                        <tr class="hover:bg-purple-50/50">
+                            <td class="p-3 font-extrabold text-brand-purple">Fase 2: Análisis Teórico</td>
+                            <td class="p-3 text-center text-brand-orange font-extrabold">35 min</td>
+                            <td class="p-3 text-gray-700">Diagnóstico de necesidades según las teorías de Maslow, Herzberg y el Modelo RED de Autoeficacia.</td>
+                        </tr>
+                        <tr class="hover:bg-purple-50/50">
+                            <td class="p-3 font-extrabold text-brand-purple">Fase 3: Aplicación Doble</td>
+                            <td class="p-3 text-center text-brand-orange font-extrabold">45 min</td>
+                            <td class="p-3 text-gray-700">Construcción del plan comparativo: Estrategia Con Cargo (Jefe) vs. Estrategia Sin Cargo (Auxiliar Técnico).</td>
+                        </tr>
+                        <tr class="hover:bg-purple-50/50">
+                            <td class="p-3 font-extrabold text-brand-purple">Fase 4: Disertación y Cierre</td>
+                            <td class="p-3 text-center text-brand-orange font-extrabold">25 min</td>
+                            <td class="p-3 text-gray-700">Debate interno sobre puntos de desacuerdo, redacción del guion de comunicación y carga de la matriz a la plataforma.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CASO REAL INTERACTIVO -->
+        <section class="bg-white p-6 sm:p-8 rounded-3xl border-2 border-gray-200 shadow-lg space-y-6">
+            <div class="flex items-center space-x-3 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-building-user text-3xl text-brand-purple"></i>
+                <div>
+                    <span class="text-xs uppercase font-extrabold text-brand-turquoise">Caso Real Pyme</span>
+                    <h3 class="text-2xl font-extrabold text-brand-purple">"El Cuello de Botella en el Área de Gestión Documental"</h3>
+                </div>
+            </div>
+
+            <!-- ESCENARIO PRINCIPAL -->
+            <div class="bg-purple-50 p-6 rounded-2xl border-l-4 border-brand-purple space-y-2">
+                <h4 class="font-extrabold text-brand-purple text-lg">🏢 Escenario Principal</h4>
+                <p class="text-gray-700 leading-relaxed font-semibold">
+                    Es lunes a las 8:00 AM en el área de correspondencia y archivo administrativo de una empresa de servicios. En 2 horas llegará una auditoría de calidad externa y hay más de 400 expedientes de proveedores sin clasificar ni digitalizar. El sistema informático ha presentado caídas intermitentes, lo que genera frustración.
+                </p>
+            </div>
+
+            <!-- TARJETAS DE CRISIS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-red-50 p-5 rounded-2xl border-2 border-red-200 space-y-2 comic-box">
+                    <span class="text-xs font-extrabold uppercase bg-red-500 text-white px-2 py-0.5 rounded-full">Crisis 1</span>
+                    <h5 class="font-extrabold text-red-900 text-base">📉 Clima de Desmotivación</h5>
+                    <p class="text-xs text-gray-700 font-semibold leading-relaxed">
+                        El equipo de auxiliares manifiesta agotamiento físico y mental. Sienten que su trabajo es altamente rutinario, repetitivo e "invisible" para la dirección, pues nadie reconoce su esfuerzo diario.
+                    </p>
+                </div>
+                <div class="bg-amber-50 p-5 rounded-2xl border-2 border-amber-200 space-y-2 comic-box">
+                    <span class="text-xs font-extrabold uppercase bg-amber-500 text-white px-2 py-0.5 rounded-full">Crisis 2</span>
+                    <h5 class="font-extrabold text-amber-900 text-base">😰 El Novato Paralizado</h5>
+                    <p class="text-xs text-gray-700 font-semibold leading-relaxed">
+                        Mateo, un auxiliar que ingresó hace una semana, cometió varios errores al digitar los códigos de las facturas. Se nota angustiado, va muy lento y prefiere no tocar más archivos por miedo a volver a equivocarse o recibir una llamada de atención.
+                    </p>
+                </div>
+                <div class="bg-orange-50 p-5 rounded-2xl border-2 border-orange-200 space-y-2 comic-box">
+                    <span class="text-xs font-extrabold uppercase bg-brand-orange text-white px-2 py-0.5 rounded-full">Crisis 3</span>
+                    <h5 class="font-extrabold text-orange-900 text-base">🔥 Conflicto en la Mesa</h5>
+                    <p class="text-xs text-gray-700 font-semibold leading-relaxed">
+                        Carlos y Valeria (auxiliares antiguos) discuten acaloradamente frente a todos. Valeria acusa a Carlos de ser un "desordenado" por traspapelar una carpeta clave; Carlos responde que Valeria nunca registró la entrega en la planilla física y que siempre busca culpar a los demás.
+                    </p>
+                </div>
+            </div>
+
+            <!-- MISIÓN -->
+            <div class="bg-brand-turquoise/10 p-5 rounded-2xl border-2 border-brand-turquoise/30 flex items-start space-x-4">
+                <span class="text-3xl">🎯</span>
+                <div>
+                    <h5 class="font-extrabold text-brand-purple text-base">Misión del Subgrupo Consultor</h5>
+                    <p class="text-xs sm:text-sm text-gray-800 font-semibold leading-relaxed">
+                        Como equipo consultor autónomo, deben analizar el caso usando la teoría y diseñar un <strong>Plan de Acción Motivacional</strong> que combine las decisiones directivas de la jefatura con la iniciativa del personal técnico sin cargo.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: MATRIZ DE ROLES DIALÉCTICOS -->
+        <section class="bg-white p-6 rounded-3xl border-2 border-gray-200 shadow-md space-y-4">
+            <div class="flex items-center space-x-3 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-users-gear text-2xl text-brand-turquoise"></i>
+                <h3 class="text-xl font-extrabold text-brand-purple">Asignación Obligatoria de Roles Dialécticos</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-purple-900 text-white p-5 rounded-2xl border-4 border-white shadow-lg space-y-2">
+                    <span class="text-2xl">👔</span>
+                    <h4 class="font-extrabold text-brand-yellow text-sm">ROL 1: SUPERVISOR FORMAL</h4>
+                    <p class="text-xs font-bold text-purple-200">(Defensor Con Cargo)</p>
+                    <p class="text-xs text-purple-100 leading-relaxed font-medium">
+                        Analiza desde el poder posicional, fijación de metas, claridad de procesos e incentivos éticos.
+                    </p>
+                </div>
+                <div class="bg-brand-turquoise text-white p-5 rounded-2xl border-4 border-white shadow-lg space-y-2">
+                    <span class="text-2xl">🛠️</span>
+                    <h4 class="font-extrabold text-purple-950 text-sm">ROL 2: TÉCNICO PROACTIVO</h4>
+                    <p class="text-xs font-bold text-teal-900">(Defensor Sin Cargo)</p>
+                    <p class="text-xs text-white leading-relaxed font-medium">
+                        Analiza desde el poder experto y referente entre pares, buscando elevar la autoeficacia sin esperar órdenes superiores.
+                    </p>
+                </div>
+                <div class="bg-brand-yellow text-purple-950 p-5 rounded-2xl border-4 border-white shadow-lg space-y-2">
+                    <span class="text-2xl">🧐</span>
+                    <h4 class="font-extrabold text-brand-purple text-sm">ROL 3: ANALISTA DE CLIMA</h4>
+                    <p class="text-xs font-bold text-purple-900">(Analista de Necesidades)</p>
+                    <p class="text-xs text-purple-950 leading-relaxed font-medium">
+                        Examina desde Maslow, Herzberg y Alderfer si las soluciones atacan las causas profundas o son parches.
+                    </p>
+                </div>
+                <div class="bg-brand-orange text-white p-5 rounded-2xl border-4 border-white shadow-lg space-y-2">
+                    <span class="text-2xl">⚖️</span>
+                    <h4 class="font-extrabold text-white text-sm">ROL 4/5: MEDIADOR ASÉPTICO</h4>
+                    <p class="text-xs font-bold text-orange-100">(Facilitador Transaccional)</p>
+                    <p class="text-xs text-white leading-relaxed font-medium">
+                        Garantiza que la discusión sea de Adulto a Adulto, transformando ataques en acuerdos objetivos.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: GUÍA DE TRABAJO (PREGUNTAS DEL TALLER) -->
+        <section class="bg-white p-6 sm:p-8 rounded-3xl border-2 border-gray-200 shadow-xl space-y-6">
+            <div class="flex items-center space-x-3 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-pen-to-square text-2xl text-brand-purple"></i>
+                <h3 class="text-2xl font-extrabold text-brand-purple">Formulario de Trabajo Autónomo</h3>
+            </div>
+
+            <!-- ITEM 1 -->
+            <div class="space-y-3 bg-purple-50/60 p-5 rounded-2xl border border-purple-100">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-brand-purple text-base sm:text-lg">
+                        🔹 BLOQUE 1: ANÁLISIS Y DIAGNÓSTICO TEÓRICO (35 Min)
+                    </h4>
+                    <span class="bg-brand-purple text-white text-xs font-extrabold px-3 py-1 rounded-full">Ítem 1</span>
+                </div>
+                
+                <!-- GLOSARIO TÉCNICO EXPLICATIVO -->
+                <div class="bg-white p-3 rounded-xl border border-purple-200 text-xs text-gray-700 space-y-1">
+                    <p class="font-bold text-brand-purple"><i class="fa-solid fa-lightbulb text-brand-yellow"></i> Guía Teórica para la Respuesta:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-gray-600 font-medium">
+                        <li><strong>Maslow / Alderfer (ERC):</strong> Jerarquía de Necesidades (Existencia, Relación, Crecimiento).</li>
+                        <li><strong>Herzberg:</strong> Factores Higiénicos (entorno/sistema, previenen insatisfacción) vs. Motivadores (logro/reconocimiento).</li>
+                        <li><strong>Modelo RED / Engagement:</strong> Creencia de Autoeficacia y sus tres dimensiones (Vigor, Dedicación y Absorción).</li>
+                    </ul>
+                </div>
+
+                <textarea id="item-1" rows="6" placeholder="Escriban aquí el diagnóstico completo del Bloque 1:&#10;a) Necesidades desatendidas (Maslow / Alderfer).&#10;b) Factores Higiénicos vs. Motivadores (Herzberg).&#10;c) Diagnóstico de Autoeficacia y Engagement en Mateo (Modelo RED)." class="w-full border-2 border-purple-200 focus:border-brand-purple text-gray-800 text-sm font-semibold rounded-xl p-4 outline-none transition shadow-inner"></textarea>
+            </div>
+
+            <!-- ITEM 2 -->
+            <div class="space-y-3 bg-teal-50/60 p-5 rounded-2xl border border-teal-100">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-teal-900 text-base sm:text-lg">
+                        🔹 BLOQUE 2: APLICACIÓN DESDE EL LIDERAZGO CON CARGO (45 Min)
+                    </h4>
+                    <span class="bg-brand-turquoise text-white text-xs font-extrabold px-3 py-1 rounded-full">Ítem 2</span>
+                </div>
+
+                <!-- GLOSARIO TÉCNICO EXPLICATIVO -->
+                <div class="bg-white p-3 rounded-xl border border-teal-200 text-xs text-gray-700 space-y-1">
+                    <p class="font-bold text-teal-900"><i class="fa-solid fa-lightbulb text-brand-turquoise"></i> Guía Teórica para la Respuesta:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-gray-600 font-medium">
+                        <li><strong>Bases de Poder (French & Raven):</strong> Uso ético del Poder Legítimo y Recompensa sin caer en lo Coercitivo.</li>
+                        <li><strong>Metas & Expectativas (Vroom / Locke):</strong> Fijación de metas específicas y alineación Expectativa-Instrumentalidad.</li>
+                    </ul>
+                </div>
+
+                <textarea id="item-2" rows="6" placeholder="Escriban aquí la estrategia desde el Jefe (Con Cargo):&#10;a) Uso ético del Poder Legítimo y Recompensa sin coacción.&#10;b) Definición de la meta específica del grupo y activación de la Expectativa.&#10;c) Facilitación de recursos para corregir el sistema." class="w-full border-2 border-teal-200 focus:border-brand-turquoise text-gray-800 text-sm font-semibold rounded-xl p-4 outline-none transition shadow-inner"></textarea>
+            </div>
+
+            <!-- ITEM 3 -->
+            <div class="space-y-3 bg-amber-50/60 p-5 rounded-2xl border border-amber-100">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-amber-900 text-base sm:text-lg">
+                        🔹 BLOQUE 3: APLICACIÓN DESDE EL LIDERAZGO SIN CARGO (45 Min)
+                    </h4>
+                    <span class="bg-brand-yellow text-brand-purple text-xs font-extrabold px-3 py-1 rounded-full">Ítem 3</span>
+                </div>
+
+                <!-- GLOSARIO TÉCNICO EXPLICATIVO -->
+                <div class="bg-white p-3 rounded-xl border border-amber-200 text-xs text-gray-700 space-y-1">
+                    <p class="font-bold text-amber-900"><i class="fa-solid fa-lightbulb text-brand-orange"></i> Guía Teórica para la Respuesta:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-gray-600 font-medium">
+                        <li><strong>Poder Experto & Referente:</strong> Dominio técnico y empatía personal entre pares.</li>
+                        <li><strong>Persuasión Verbal (Bandura):</strong> Frase exacta de aliento para devolver la confianza a Mateo.</li>
+                        <li><strong>Motivación Intrínseca vs Trascendente:</strong> Autonomía interna e impacto final del trabajo en los usuarios.</li>
+                    </ul>
+                </div>
+
+                <textarea id="item-3" rows="6" placeholder="Escriban aquí la estrategia del Auxiliar Técnico (Sin Cargo):&#10;a) Despliegue del Poder Experto y Referente para ayudar a Mateo.&#10;b) Frase exacta de persuasión verbal (Bandura) para Mateo.&#10;c) Activación de Motivación Intrínseca (autonomía) y Trascendente (sentido de servicio)." class="w-full border-2 border-amber-200 focus:border-brand-yellow text-gray-800 text-sm font-semibold rounded-xl p-4 outline-none transition shadow-inner"></textarea>
+            </div>
+
+            <!-- ITEM 4 -->
+            <div class="space-y-3 bg-orange-50/60 p-5 rounded-2xl border border-orange-100">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-orange-950 text-base sm:text-lg">
+                        🔹 BLOQUE 4: DISERTACIÓN, CONFLICTO Y COMUNICACIÓN (25 Min)
+                    </h4>
+                    <span class="bg-brand-orange text-white text-xs font-extrabold px-3 py-1 rounded-full">Ítem 4</span>
+                </div>
+
+                <!-- GLOSARIO TÉCNICO EXPLICATIVO -->
+                <div class="bg-white p-3 rounded-xl border border-orange-200 text-xs text-gray-700 space-y-1">
+                    <p class="font-bold text-orange-950"><i class="fa-solid fa-lightbulb text-brand-orange"></i> Guía Teórica para la Respuesta:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-gray-600 font-medium">
+                        <li><strong>Disertación de Grupo:</strong> Reflexión sobre cómo interactuaron la solución directiva y la entre pares.</li>
+                        <li><strong>Análisis Transaccional:</strong> Comunicación de Adulto a Adulto (&quot;Yo estoy bien - Tú estás bien&quot;).</li>
+                    </ul>
+                </div>
+
+                <textarea id="item-4" rows="6" placeholder="Escriban aquí el registro de disertación y resolución del conflicto:&#10;a) Punto de desacuerdo inicial en el grupo y cómo llegaron a consenso.&#10;b) Guion de 3 a 4 líneas de diálogo de Adulto a Adulto entre Carlos y Valeria." class="w-full border-2 border-orange-200 focus:border-brand-orange text-gray-800 text-sm font-semibold rounded-xl p-4 outline-none transition shadow-inner"></textarea>
+            </div>
+
+            <!-- ITEM 5 (RÚBRICA Y AUTOEVALUACIÓN) -->
+            <div class="space-y-3 bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-gray-900 text-base sm:text-lg">
+                        📋 BLOQUE 5: CONCLUSIÓN Y COMPROMISO DEL SUBGRUPO
+                    </h4>
+                    <span class="bg-gray-800 text-white text-xs font-extrabold px-3 py-1 rounded-full">Ítem 5</span>
+                </div>
+                <textarea id="item-5" rows="4" placeholder="Escriban una breve conclusión final del subgrupo sobre el principal aprendizaje alcanzado en este taller en relación con la articulación entre el liderazgo formal y el liderazgo informal." class="w-full border-2 border-gray-300 focus:border-gray-800 text-gray-800 text-sm font-semibold rounded-xl p-4 outline-none transition shadow-inner"></textarea>
+            </div>
+        </section>
+
+        <!-- CONTROLES Y ACCIONES LOCALSTORAGE / JSON / ENVÍO -->
+        <section class="bg-white p-6 rounded-3xl border-2 border-gray-200 shadow-md space-y-4 no-print">
+            <h3 class="text-lg font-extrabold text-brand-purple border-b border-gray-100 pb-2">Gestión y Guardado del Avance</h3>
+            <div class="flex flex-wrap gap-4">
+                <button onclick="saveToLocalStorage()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-5 rounded-xl shadow transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar Avance Local
+                </button>
+                <button onclick="downloadBackup()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-5 rounded-xl shadow transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-download"></i> Descargar Respaldo (.JSON)
+                </button>
+                <label class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-5 rounded-xl shadow transition flex items-center gap-2 text-sm cursor-pointer">
+                    <i class="fa-solid fa-upload"></i> Cargar Respaldo (.JSON)
+                    <input type="file" id="file-input" onchange="handleFileUpload(event)" accept=".json" class="hidden">
+                </label>
+            </div>
+        </section>
+
+        <!-- BOTONES CTA PRINCIPALES: ENVÍO SHEETS & VISTA PREVIA PDF -->
+        <section class="bg-gradient-to-r from-brand-purple to-purple-900 p-8 rounded-3xl border-4 border-white shadow-2xl text-white text-center space-y-6 no-print">
+            <div>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-brand-yellow">Finalización y Entrega de la Actividad</h3>
+                <p class="text-sm text-purple-200 mt-1">Asegúrense de haber completado todos los ítems antes de proceder al envío definitivo.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button id="btn-enviar" onclick="sendDataToWebhook()" class="w-full sm:w-auto bg-brand-orange hover:bg-orange-600 text-white font-extrabold text-lg py-4 px-8 rounded-2xl shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-paper-plane text-xl"></i>
+                    <span>PASO 3: Enviar Trabajo a Google Sheets ▶</span>
+                </button>
+                
+                <!-- BOTÓN PDF BLOQUEADO HASTA EL ENVÍO REAL (candado de evidencia) -->
+                <button id="btn-pdf" onclick="openPreview()" disabled class="w-full sm:w-auto bg-slate-500 text-slate-300 font-extrabold text-lg py-4 px-8 rounded-2xl shadow-lg flex items-center justify-center gap-3 opacity-70 cursor-not-allowed" title="Primero envía tus datos al servidor docente.">
+                    <i class="fa-solid fa-file-pdf text-xl"></i>
+                    <span>PASO 4: Exportar a PDF / Imprimir ▶</span>
+                </button>
+            </div>
+
+            <!-- BANNER DE ESTADO DE TRANSMISIÓN -->
+            <div id="transmission-banner" class="bg-amber-400/20 border border-amber-300/40 rounded-xl p-3 text-xs sm:text-sm font-bold text-amber-200 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span><strong>Estado:</strong> No enviado. Deben presionar "Enviar Trabajo" para habilitar el reporte PDF.</span>
+            </div>
+
+            <!-- MENSAJE DE ESTADO DEL ENVÍO -->
+            <div id="status-message" class="hidden text-sm font-extrabold p-4 rounded-xl max-w-md mx-auto"></div>
+        </section>
+
+</main>
+
+<footer class="bg-brand-purple text-white py-6 border-t border-purple-800 mt-12 no-print">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-purple-300 font-semibold space-y-1">
+        <p>© 2026 Instituto i3 — inclusión • inflexión • impacto</p>
+        <p>Diseño Tecnopedagógico e Integración por Miguel Cruz</p>
+    </div>
+</footer>
+
+<!-- LÓGICA JAVASCRIPT INTEGRADA -->
+<script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbykP5mOpfvgjO-R3aMf2t8tzAg-nc5Tc2cpVmtpRh33C-ZwYUW9G9-CWr-bq7zVEv5s/exec";
+    const STORAGE_KEY = "i3_taller_liderazgo_ACT06";
+    const ACTIVIDAD_ID_ESPERADA = "I3Liderazgo_ACT06";
+
+    let datosTransmitidos = false;
+    let lastTransmittedHash = null;
+
+    // Función de escape HTML para evitar inyección en renderizado emergente
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // ===== Sistema de toasts (reemplaza alert) =====
+    function showToast(message, type = "info", duration = 5000) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.transition = "opacity 0.3s ease";
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    // ===== Hash de integridad: detecta cualquier edición post-envío =====
+    function computeHash() {
+        const data = getFormData();
+        // Excluye campos de estado para que solo el CONTENIDO dispare el candado
+        const { estado, transmitted, hash, fecha_registro, ...contenido } = data;
+        const str = JSON.stringify(contenido);
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+            h = (h << 5) - h + str.charCodeAt(i);
+            h |= 0;
+        }
+        return String(h);
+    }
+
+    function lockPdfButton() {
+        const btn = document.getElementById('btn-pdf');
+        btn.disabled = true;
+        btn.className = "w-full sm:w-auto bg-slate-500 text-slate-300 font-extrabold text-lg py-4 px-8 rounded-2xl shadow-lg flex items-center justify-center gap-3 opacity-70 cursor-not-allowed";
+    }
+
+    function unlockPdfButton() {
+        const btn = document.getElementById('btn-pdf');
+        btn.disabled = false;
+        btn.className = "w-full sm:w-auto bg-brand-turquoise hover:bg-cyan-600 text-white font-extrabold text-lg py-4 px-8 rounded-2xl shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-3";
+    }
+
+    function markTransmittedUI() {
+        const banner = document.getElementById('transmission-banner');
+        banner.className = "bg-lime-400/20 border border-lime-300/40 rounded-xl p-3 text-xs sm:text-sm font-bold text-lime-200 flex items-center justify-center gap-2";
+        banner.innerHTML = '<i class="fa-solid fa-circle-check"></i><span><strong>✅ Registrado:</strong> Respuestas sincronizadas. Ya pueden exportar el reporte PDF.</span>';
+        const btnSend = document.getElementById('btn-enviar');
+        btnSend.innerHTML = '<i class="fa-solid fa-circle-check text-xl"></i><span>¡Trabajo Transmitido!</span>';
+    }
+
+    function markNotTransmittedUI() {
+        const banner = document.getElementById('transmission-banner');
+        banner.className = "bg-amber-400/20 border border-amber-300/40 rounded-xl p-3 text-xs sm:text-sm font-bold text-amber-200 flex items-center justify-center gap-2";
+        banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span><strong>Estado:</strong> No enviado. Deben presionar "Enviar Trabajo" para habilitar el reporte PDF.</span>';
+        const btnSend = document.getElementById('btn-enviar');
+        btnSend.innerHTML = '<i class="fa-solid fa-paper-plane text-xl"></i><span>PASO 3: Enviar Trabajo a Google Sheets ▶</span>';
+    }
+
+    // Restaura el candado tras recargar SOLO si el contenido coincide con el hash transmitido
+    function restoreTransmissionLock() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        try {
+            const data = JSON.parse(saved);
+            if (data.transmitted === "true" && data.hash && computeHash() === data.hash) {
+                datosTransmitidos = true;
+                lastTransmittedHash = data.hash;
+                markTransmittedUI();
+                unlockPdfButton();
+            }
+            // Si no coincide (editaron antes de recargar), queda re-bloqueado por defecto
+        } catch (e) {
+            console.error("Error al restaurar candado de transmisión", e);
+        }
+    }
+
+    // Captura estructurada de datos del formulario
+    function getFormData() {
+        return {
+            materia: document.getElementById('input-materia')?.value || "Liderazgo y Gestión del Talento",
+            actividad_id: document.getElementById('input-actividad-id')?.value || ACTIVIDAD_ID_ESPERADA,
+            grupo: document.getElementById('input-grupo')?.value || "",
+            participantes: document.getElementById('input-participantes')?.value || "",
+            item1: document.getElementById('item-1')?.value || "",
+            item2: document.getElementById('item-2')?.value || "",
+            item3: document.getElementById('item-3')?.value || "",
+            item4: document.getElementById('item-4')?.value || "",
+            item5: document.getElementById('item-5')?.value || "",
+            // Estado honesto: solo "Entregado" si realmente se transmitió
+            estado: datosTransmitidos ? "Entregado" : "Borrador",
+            fecha_registro: new Date().toLocaleString(),
+            transmitted: datosTransmitidos ? "true" : "false",
+            hash: lastTransmittedHash || ""
+        };
+    }
+
+    // LocalStorage: Autoguardado
+    function saveToLocalStorage() {
+        const data = getFormData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (typeof data.grupo === 'string') document.getElementById('input-grupo').value = data.grupo;
+                if (typeof data.participantes === 'string') document.getElementById('input-participantes').value = data.participantes;
+                if (typeof data.item1 === 'string') document.getElementById('item-1').value = data.item1;
+                if (typeof data.item2 === 'string') document.getElementById('item-2').value = data.item2;
+                if (typeof data.item3 === 'string') document.getElementById('item-3').value = data.item3;
+                if (typeof data.item4 === 'string') document.getElementById('item-4').value = data.item4;
+                if (typeof data.item5 === 'string') document.getElementById('item-5').value = data.item5;
+            } catch (e) {
+                console.error("Error al cargar autoguardado local", e);
+                showToast("⚠️ El autoguardado local está dañado; se ignoró.", "warning");
+            }
+        }
+    }
+
+    // Listeners para guardar en tiempo real + candado post-envío
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromLocalStorage();
+        restoreTransmissionLock();
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                saveToLocalStorage();
+                // Candado: cualquier edición tras el envío re-bloquea el PDF
+                if (datosTransmitidos && lastTransmittedHash !== null && computeHash() !== lastTransmittedHash) {
+                    datosTransmitidos = false;
+                    lockPdfButton();
+                    markNotTransmittedUI();
+                    saveToLocalStorage();
+                    showToast("✏️ Detecté una edición después del envío. Deben volver a transmitir para exportar el PDF.", "warning", 7000);
+                }
+            });
+        });
+    });
+
+    // Descarga de Respaldo JSON (estado honesto: Borrador/Entregado real)
+    function downloadBackup() {
+        const data = getFormData();
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Respaldo_${data.actividad_id}_${data.grupo || 'SinGrupo'}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("💾 Respaldo JSON descargado.", "info", 3500);
+    }
+
+    // Carga de Respaldo JSON (validado y saneado)
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                // Validación dura: solo respaldos de ESTA actividad
+                if (data.actividad_id !== ACTIVIDAD_ID_ESPERADA) {
+                    showToast(`❌ Respaldo rechazado: pertenece a "${escapeHtml(String(data.actividad_id || 'ID desconocido'))}" y esta actividad es "${ACTIVIDAD_ID_ESPERADA}".`, "error", 8000);
+                    event.target.value = '';
+                    return;
+                }
+                // Saneo: solo strings
+                if (typeof data.grupo === 'string') document.getElementById('input-grupo').value = data.grupo;
+                if (typeof data.participantes === 'string') document.getElementById('input-participantes').value = data.participantes;
+                if (typeof data.item1 === 'string') document.getElementById('item-1').value = data.item1;
+                if (typeof data.item2 === 'string') document.getElementById('item-2').value = data.item2;
+                if (typeof data.item3 === 'string') document.getElementById('item-3').value = data.item3;
+                if (typeof data.item4 === 'string') document.getElementById('item-4').value = data.item4;
+                if (typeof data.item5 === 'string') document.getElementById('item-5').value = data.item5;
+                saveToLocalStorage();
+
+                // El candado solo se restaura si el respaldo contiene la MISMA versión transmitida
+                const hashRespaldo = (typeof data.hash === 'string') ? data.hash : null;
+                if (data.transmitted === "true" && hashRespaldo && computeHash() === hashRespaldo) {
+                    datosTransmitidos = true;
+                    lastTransmittedHash = hashRespaldo;
+                    markTransmittedUI();
+                    unlockPdfButton();
+                    saveToLocalStorage();
+                    showToast("✅ Respaldo cargado: contiene la misma versión ya transmitida (PDF habilitado).", "success", 6000);
+                } else {
+                    datosTransmitidos = false;
+                    lastTransmittedHash = null;
+                    lockPdfButton();
+                    markNotTransmittedUI();
+                    saveToLocalStorage();
+                    showToast("✅ Respaldo cargado. Como su contenido puede diferir del último envío, deben volver a transmitir.", "warning", 7000);
+                }
+            } catch (err) {
+                showToast("❌ El archivo subido no es un JSON válido.", "error");
+            }
+            event.target.value = ''; // permite recargar el mismo archivo
+        };
+        reader.readAsText(file);
+    }
+
+    // Validación completa: registro + los 5 bloques del taller
+    function validateForm() {
+        const data = getFormData();
+        if (!data.grupo.trim()) return { ok: false, msg: "⚠️ Completen el Número de Sala / Grupo antes de enviar." };
+        if (!data.participantes.trim()) return { ok: false, msg: "⚠️ Completen los Nombres de Integrantes antes de enviar." };
+        const bloques = [
+            ['item1', 'Bloque 1: Análisis y Diagnóstico Teórico'],
+            ['item2', 'Bloque 2: Liderazgo Con Cargo'],
+            ['item3', 'Bloque 3: Liderazgo Sin Cargo'],
+            ['item4', 'Bloque 4: Disertación y Comunicación'],
+            ['item5', 'Bloque 5: Conclusión y Compromiso']
+        ];
+        for (const [key, label] of bloques) {
+            if (!data[key] || !String(data[key]).trim()) {
+                return { ok: false, msg: `⚠️ El ${label} está vacío. Complétenlo antes de enviar.` };
+            }
+        }
+        return { ok: true };
+    }
+
+    // Envío de datos al Webhook de Google Apps Script con Header compatible
+    async function sendDataToWebhook() {
+        const statusDiv = document.getElementById('status-message');
+        const check = validateForm();
+        if (!check.ok) {
+            showToast(check.msg, "warning", 7000);
+            return;
+        }
+
+        const btnSend = document.getElementById('btn-enviar');
+        btnSend.disabled = true;
+        statusDiv.className = "text-sm font-extrabold p-4 rounded-xl max-w-md mx-auto bg-amber-400 text-purple-950 block";
+        statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Transmitiendo entregable al docente...';
+
+        try {
+            const data = getFormData();
+            data.estado = "Entregado";
+            data.fecha_registro = new Date().toLocaleString(); // fecha del envío real
+            data.transmitted = "true";
+            data.hash = computeHash();
+
+            // Se utiliza Content-Type text/plain para cumplir con especificación no-cors a Apps Script
+            await fetch(WEBHOOK_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(data)
+            });
+
+            datosTransmitidos = true;
+            lastTransmittedHash = data.hash;
+            saveToLocalStorage();
+            markTransmittedUI();
+            unlockPdfButton();
+            btnSend.disabled = false;
+
+            statusDiv.className = "text-sm font-extrabold p-4 rounded-xl max-w-md mx-auto bg-lime-400 text-purple-950 block";
+            // Mensaje honesto: el navegador no puede verificar el servidor con no-cors
+            statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> ✅ Transmisión completada (el navegador no puede confirmar el servidor). Si el docente no ve su fila, reintenta. Ya pueden exportar el PDF.';
+        } catch (error) {
+            console.error("Error al enviar al Webhook", error);
+            // El catch solo se alcanza si falló la CONEXIÓN: el servidor NO recibió nada.
+            statusDiv.className = "text-sm font-extrabold p-4 rounded-xl max-w-md mx-auto bg-red-500 text-white block";
+            statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ❌ Falló la conexión: el servidor NO recibió sus datos. Guarden su respaldo JSON e intenten nuevamente.';
+            btnSend.disabled = false;
+        }
+    }
+
+    // Vista Previa de Impresión / PDF con layout responsivo y control antidesbordamiento
+    function openPreview() {
+        // Candado de evidencia: el PDF solo se genera tras el envío real
+        if (!datosTransmitidos) {
+            showToast("⛔ Acción bloqueada: Primero presionen 'Enviar Trabajo' para registrar sus respuestas.", "warning", 6000);
+            return;
+        }
+        // Doble candado: el PDF solo abre si el contenido sigue siendo el transmitido
+        if (computeHash() !== lastTransmittedHash) {
+            datosTransmitidos = false;
+            lockPdfButton();
+            markNotTransmittedUI();
+            saveToLocalStorage();
+            showToast("⛔ El contenido cambió después del envío. Vuelvan a transmitir antes de exportar el PDF.", "warning", 7000);
+            return;
+        }
+
+        const data = getFormData();
+        const previewWindow = window.open('', '_blank');
+        if (!previewWindow) {
+            showToast("⛔ Su navegador bloqueó la ventana emergente. Permitan ventanas emergentes para esta página e inténtenlo de nuevo.", "error", 8000);
+            return;
+        }
+
+        const content = `
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Reporte de Entregable - ${escapeHtml(data.actividad_id)}</title>
+                <style>
+                    @page { size: A4; margin: 12mm; }
+                    * { box-sizing: border-box; }
+                    body {
+                        font-family: 'Helvetica Neue', Arial, sans-serif;
+                        color: #1e293b;
+                        line-height: 1.5;
+                        margin: 0;
+                        padding: 16px;
+                        background-color: #ffffff;
+                        print-color-adjust: exact;
+                        -webkit-print-color-adjust: exact;
+                        word-break: break-word;
+                        overflow-wrap: anywhere;
+                    }
+                    .no-print { margin-bottom: 20px; text-align: right; }
+                    .btn-print {
+                        background-color: #1e40af;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        font-weight: bold;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 14px;
+                    }
+                    .header { border-bottom: 3px solid #1e40af; padding-bottom: 12px; margin-bottom: 20px; }
+                    .title { color: #1e40af; font-size: 18pt; font-weight: bold; margin: 0; }
+                    .subtitle { color: #475569; font-size: 10pt; margin-top: 4px; font-weight: bold; }
+                    .meta-box {
+                        background-color: #f8fafc;
+                        border: 1px solid #cbd5e1;
+                        border-radius: 8px;
+                        padding: 12px;
+                        margin-bottom: 20px;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 8px;
+                        font-size: 9.5pt;
+                    }
+                    .meta-full { grid-column: span 2; }
+                    .section-title {
+                        color: #1e40af;
+                        font-size: 11pt;
+                        font-weight: bold;
+                        border-left: 4px solid #1e40af;
+                        padding-left: 8px;
+                        margin-top: 18px;
+                        margin-bottom: 8px;
+                        text-transform: uppercase;
+                        page-break-after: avoid;
+                        break-after: avoid;
+                    }
+                    .box-content {
+                        border: 1px solid #e2e8f0;
+                        border-radius: 6px;
+                        padding: 12px;
+                        background-color: #ffffff;
+                        font-size: 9.5pt;
+                        white-space: pre-wrap;
+                        margin-bottom: 15px;
+                        overflow-wrap: break-word;
+                        word-break: break-word;
+                        break-inside: auto;
+                    }
+                    @media (max-width: 600px) {
+                        .meta-box { grid-template-columns: 1fr; }
+                        .meta-full { grid-column: span 1; }
+                    }
+                    @media print {
+                        .no-print { display: none !important; }
+                        body { padding: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="no-print">
+                    <button onclick="window.print()" class="btn-print">🖨️ Imprimir o Guardar como PDF</button>
+                </div>
+
+                <div class="header">
+                    <h1 class="title">INSTITUTO i3 — REPORTE DE ENTREGABLE</h1>
+                    <div class="subtitle">MATRIZ DEL PLAN DE LIDERAZGO Y MOTIVACIÓN EN EL ENTORNO LABORAL</div>
+                </div>
+
+                <div class="meta-box">
+                    <div><strong>Materia:</strong> ${escapeHtml(data.materia)}</div>
+                    <div><strong>ID Actividad:</strong> ${escapeHtml(data.actividad_id)}</div>
+                    <div><strong>Grupo / Sala:</strong> ${escapeHtml(data.grupo) || 'No especificado'}</div>
+                    <div><strong>Fecha de envío:</strong> ${escapeHtml(data.fecha_registro)}</div>
+                    <div class="meta-full"><strong>Integrantes:</strong> ${escapeHtml(data.participantes) || 'No especificados'}</div>
+                    <div class="meta-full"><strong>Estado:</strong> ${escapeHtml(data.estado)} — verificado por transmisión al servidor docente</div>
+                </div>
+
+                <div class="section-title">1. Diagnóstico Teórico del Caso (Bloque 1)</div>
+                <div class="box-content">${escapeHtml(data.item1) || 'Sin respuesta'}</div>
+
+                <div class="section-title">2. Estrategia desde el Liderazgo Con Cargo (Bloque 2)</div>
+                <div class="box-content">${escapeHtml(data.item2) || 'Sin respuesta'}</div>
+
+                <div class="section-title">3. Estrategia desde el Liderazgo Sin Cargo (Bloque 3)</div>
+                <div class="box-content">${escapeHtml(data.item3) || 'Sin respuesta'}</div>
+
+                <div class="section-title">4. Registro de Disertación y Resolución de Conflictos (Bloque 4)</div>
+                <div class="box-content">${escapeHtml(data.item4) || 'Sin respuesta'}</div>
+
+                <div class="section-title">5. Conclusión y Compromiso del Subgrupo (Bloque 5)</div>
+                <div class="box-content">${escapeHtml(data.item5) || 'Sin respuesta'}</div>
+
+                <div style="margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 6px; font-size: 8.5pt; color: #94a3b8; text-align: center;">
+                    Estado de transmisión al servidor docente: <strong>REGISTRADO & ENVIADO</strong>
+                </div>
+            </body>
+            </html>
+        `;
+
+        previewWindow.document.open();
+        previewWindow.document.write(content);
+        previewWindow.document.close();
+    }
+</script>
+</body>
+</html>
